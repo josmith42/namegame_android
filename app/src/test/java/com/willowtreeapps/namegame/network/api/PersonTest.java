@@ -1,21 +1,17 @@
 package com.willowtreeapps.namegame.network.api;
 
-import android.os.Build;
 import android.os.Parcel;
 
 import com.google.gson.Gson;
-import com.willowtreeapps.namegame.BuildConfig;
 import com.willowtreeapps.namegame.network.api.model.Person;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RobolectricTestRunner;
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@RunWith(RobolectricTestRunner.class)
 public class PersonTest {
 
     private Gson gson;
