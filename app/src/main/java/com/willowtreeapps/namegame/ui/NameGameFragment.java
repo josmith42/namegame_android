@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -20,6 +21,8 @@ import com.willowtreeapps.namegame.core.NameGameApplication;
 import com.willowtreeapps.namegame.network.api.model.Person;
 import com.willowtreeapps.namegame.util.CircleBorderTransform;
 import com.willowtreeapps.namegame.util.Ui;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,14 +54,26 @@ public class NameGameFragment extends Fragment {
         nameGameViewModel = modelFactory.get(this);
         nameGameViewModel.getProfiles().observe(this, new Observer<List<Person>>() {
             @Override
-            public void onChanged(@Nullable List<Person> profiles){
+            public void onChanged(@Nullable List<Person> profiles) {
+                if (profiles == null) {
+                    return;
+                }
+                LinearLayout faceContainer = getView().findViewById(R.id.face_container);
+                List<ImageView> imageViews = new ArrayList<>();
+                for (int i = 0; i < faceContainer.getChildCount(); i++) {
+                    View view = faceContainer.getChildAt(i);
+                    if (view instanceof ImageView) {
+                        imageViews.add((ImageView)view);
+                    }
+                }
+                setImages(imageViews, profiles);
             }
         });
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.name_game_fragment, container, false);
     }
 

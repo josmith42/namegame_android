@@ -8,7 +8,8 @@
     android:background="@color/offWhite"
     android:id="@+id/container">
     <fragment
+        android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.willowtreeapps.namegame.ui.NameGameFragment"/>
+        class="com.willowtreeapps.namegame.ui.NameGameFragment"/>
 </FrameLayout>
