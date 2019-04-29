@@ -7,7 +7,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import com.willowtreeapps.namegame.network.api.NameGameApi
 import com.willowtreeapps.namegame.network.api.ProfilesRepository
-import com.willowtreeapps.namegame.network.api.model.Profiles
+import com.willowtreeapps.namegame.network.api.model.Person
 import javax.inject.Inject
 
 class NameGameViewModel(application: Application) : AndroidViewModel(application) {
@@ -16,12 +16,12 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
 
     lateinit var profilesRepository: ProfilesRepository
 
-    private val _profiles = MutableLiveData<Profiles?>()
-    val profiles : LiveData<Profiles?> = _profiles
+    private val _profiles = MutableLiveData<List<Person>>()
+    val profiles : LiveData<List<Person>> = _profiles
 
     fun init() {
         profilesRepository = ProfilesRepository(nameGameApi, object : ProfilesRepository.Listener {
-            override fun onLoadFinished(people: Profiles) {
+            override fun onLoadFinished(people: List<Person>) {
                 _profiles.postValue(people)
             }
 

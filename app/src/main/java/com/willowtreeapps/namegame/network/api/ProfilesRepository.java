@@ -3,7 +3,9 @@ package com.willowtreeapps.namegame.network.api;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.willowtreeapps.namegame.network.api.model.Profiles;
+import com.willowtreeapps.namegame.network.api.model.Person;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ public class ProfilesRepository {
     @NonNull
     private List<Listener> listeners = new ArrayList<>(1);
     @Nullable
-    private Profiles profiles;
+    private List<Person> profiles;
 
     public ProfilesRepository(@NonNull NameGameApi api, Listener... listeners) {
         this.api = api;
@@ -31,17 +33,18 @@ public class ProfilesRepository {
     }
 
     private void load() {
-        this.api.getProfiles().enqueue(new Callback<Profiles>() {
+        this.api.getProfiles().enqueue(new Callback<List<Person>>() {
             @Override
-            public void onResponse(Call<Profiles> call, Response<Profiles> response) {
+            public void onResponse(@NotNull Call<List<Person>> call, @NotNull Response<List<Person>> response) {
                 profiles = response.body();
+                assert profiles != null;
                 for (Listener listener : listeners) {
                     listener.onLoadFinished(profiles);
                 }
             }
 
             @Override
-            public void onFailure(Call<Profiles> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Person>> call, @NotNull Throwable t) {
                 for (Listener listener : listeners) {
                     listener.onError(t);
                 }
@@ -62,7 +65,7 @@ public class ProfilesRepository {
     }
 
     public interface Listener {
-        void onLoadFinished(@NonNull Profiles people);
+        void onLoadFinished(@NonNull List<Person> people);
         void onError(@NonNull Throwable error);
     }
 

@@ -3,6 +3,7 @@ package com.willowtreeapps.namegame.network.api.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements Parcelable {
@@ -14,7 +15,7 @@ public class Person implements Parcelable {
     private final String firstName;
     private final String lastName;
     private final Headshot headshot;
-    private final List<String> socialLinks;
+    private final List<SocialLink> socialLinks;
 
     public Person(String id,
                   String type,
@@ -23,7 +24,7 @@ public class Person implements Parcelable {
                   String firstName,
                   String lastName,
                   Headshot headshot,
-                  List<String> socialLinks) {
+                  List<SocialLink> socialLinks) {
         this.id = id;
         this.type = type;
         this.slug = slug;
@@ -42,7 +43,8 @@ public class Person implements Parcelable {
         this.firstName = in.readString();
         this.lastName = in.readString();
         this.headshot = in.readParcelable(Headshot.class.getClassLoader());
-        this.socialLinks = in.createStringArrayList();
+        this.socialLinks = new ArrayList<>();
+        in.readList(this.socialLinks,SocialLink.class.getClassLoader());
     }
 
     public String getId() {
@@ -73,7 +75,7 @@ public class Person implements Parcelable {
         return headshot;
     }
 
-    public List<String> getSocialLinks() {
+    public List<SocialLink> getSocialLinks() {
         return socialLinks;
     }
 
@@ -86,7 +88,7 @@ public class Person implements Parcelable {
         dest.writeString(this.firstName);
         dest.writeString(this.lastName);
         dest.writeParcelable(this.headshot, flags);
-        dest.writeStringList(this.socialLinks);
+        dest.writeParcelableArray(this.socialLinks.toArray(new SocialLink[0]), flags);
     }
 
     public static final Creator<Person> CREATOR = new Creator<Person>() {

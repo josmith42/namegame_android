@@ -51,9 +51,9 @@ public class NameGameFragment extends Fragment {
         super.onCreate(savedInstanceState);
         NameGameApplication.get(getActivity()).component().inject(this);
         nameGameViewModel = modelFactory.get(this);
-        nameGameViewModel.getProfiles().observe(this, new Observer<Profiles>() {
+        nameGameViewModel.getProfiles().observe(this, new Observer<List<Person>>() {
             @Override
-            public void onChanged(@Nullable Profiles profiles){
+            public void onChanged(@Nullable List<Person> profiles){
             }
         });
     }
