@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -45,7 +44,7 @@ public class NameGameFragment extends Fragment {
 
     private TextView title;
     private ViewGroup container;
-    private List<ImageView> faces = new ArrayList<>(5);
+    private List<ImageView> faces = new ArrayList<>(6);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,15 +57,7 @@ public class NameGameFragment extends Fragment {
                 if (profiles == null) {
                     return;
                 }
-                LinearLayout faceContainer = getView().findViewById(R.id.face_container);
-                List<ImageView> imageViews = new ArrayList<>();
-                for (int i = 0; i < faceContainer.getChildCount(); i++) {
-                    View view = faceContainer.getChildAt(i);
-                    if (view instanceof ImageView) {
-                        imageViews.add((ImageView)view);
-                    }
-                }
-                setImages(imageViews, profiles);
+                setImages(faces, profiles);
             }
         });
     }
@@ -83,7 +74,7 @@ public class NameGameFragment extends Fragment {
         container = (ViewGroup) view.findViewById(R.id.face_container);
 
         //Hide the views until data loads
-        title.setAlpha(0);
+//        title.setAlpha(0);
 
         int n = container.getChildCount();
         for (int i = 0; i < n; i++) {
@@ -91,8 +82,8 @@ public class NameGameFragment extends Fragment {
             faces.add(face);
 
             //Hide the views until data loads
-            face.setScaleX(0);
-            face.setScaleY(0);
+//            face.setScaleX(0);
+//            face.setScaleY(0);
         }
 
         nameGameViewModel.init();
@@ -101,13 +92,20 @@ public class NameGameFragment extends Fragment {
     /**
      * A method for setting the images from people into the imageviews
      */
-    private void setImages(List<ImageView> faces, List<Person> profiles) {
+    private void setImages(@NotNull List<ImageView> faces, List<Person> profiles) {
         int imageSize = (int) Ui.convertDpToPixel(100, getContext());
         int n = faces.size();
 
         for (int i = 0; i < n; i++) {
             ImageView face = faces.get(i);
-            picasso.load(profiles.get(i).getHeadshot().getUrl())
+            String url = profiles.get(i).getHeadshot().getUrl();
+
+            // Fix URL so that pictures will load
+            if (url.startsWith("//")) {
+                url = "https:" + url;
+            }
+
+            picasso.load(url)
                     .placeholder(R.drawable.ic_face_white_48dp)
                     .resize(imageSize, imageSize)
                     .transform(new CircleBorderTransform())
