@@ -1,7 +1,6 @@
 package com.willowtreeapps.namegame.ui;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.willowtreeapps.namegame.R;
 import com.willowtreeapps.namegame.core.ListRandomizer;
 import com.willowtreeapps.namegame.core.NameGameApplication;
 import com.willowtreeapps.namegame.network.api.model.Person;
-import com.willowtreeapps.namegame.network.api.model.Profiles;
 import com.willowtreeapps.namegame.util.CircleBorderTransform;
 import com.willowtreeapps.namegame.util.Ui;
 
@@ -88,14 +86,13 @@ public class NameGameFragment extends Fragment {
     /**
      * A method for setting the images from people into the imageviews
      */
-    private void setImages(List<ImageView> faces, Profiles profiles) {
-        List<Person> people = profiles.getPeople();
+    private void setImages(List<ImageView> faces, List<Person> profiles) {
         int imageSize = (int) Ui.convertDpToPixel(100, getContext());
         int n = faces.size();
 
         for (int i = 0; i < n; i++) {
             ImageView face = faces.get(i);
-            picasso.load(people.get(i).getHeadshot().getUrl())
+            picasso.load(profiles.get(i).getHeadshot().getUrl())
                     .placeholder(R.drawable.ic_face_white_48dp)
                     .resize(imageSize, imageSize)
                     .transform(new CircleBorderTransform())
