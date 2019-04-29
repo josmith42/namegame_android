@@ -10,7 +10,6 @@ public class NameGameActivity extends AppCompatActivity {
 
     private static final String FRAG_TAG = "NameGameFragmentTag";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

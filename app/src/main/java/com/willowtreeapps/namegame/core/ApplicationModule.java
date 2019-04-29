@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.willowtreeapps.namegame.ui.NameGameViewModelFactory;
 
 import java.util.Random;
 
@@ -48,4 +49,8 @@ class ApplicationModule {
         return new ListRandomizer(random);
     }
 
+    @Provides @NonNull @Singleton
+    public NameGameViewModelFactory provideNameGameViewModelFactory() {
+        return new NameGameViewModelFactory();
+    }
 }

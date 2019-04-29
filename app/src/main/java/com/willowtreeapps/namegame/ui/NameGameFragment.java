@@ -1,5 +1,7 @@
 package com.willowtreeapps.namegame.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,6 +37,11 @@ public class NameGameFragment extends Fragment {
     @Inject
     Picasso picasso;
 
+    @Inject
+    NameGameViewModelFactory modelFactory;
+
+    NameGameViewModel nameGameViewModel;
+
     private TextView title;
     private ViewGroup container;
     private List<ImageView> faces = new ArrayList<>(5);
@@ -43,6 +50,12 @@ public class NameGameFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NameGameApplication.get(getActivity()).component().inject(this);
+        nameGameViewModel = modelFactory.get(this);
+        nameGameViewModel.getProfiles().observe(this, new Observer<Profiles>() {
+            @Override
+            public void onChanged(@Nullable Profiles profiles){
+            }
+        });
     }
 
     @Nullable
@@ -69,6 +82,7 @@ public class NameGameFragment extends Fragment {
             face.setScaleY(0);
         }
 
+        nameGameViewModel.init();
     }
 
     /**
