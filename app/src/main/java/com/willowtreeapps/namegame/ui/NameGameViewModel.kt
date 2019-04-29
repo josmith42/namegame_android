@@ -77,4 +77,17 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         }
         return isCorrect
     }
+
+    val overallGameState : GuessState
+        get() {
+            val choices = _choices.value ?: return GuessState.NotGuessed
+            if (choices.any { it.guessState == GuessState.CorrectGuess }) {
+                return GuessState.CorrectGuess
+            }
+            if (choices.any { it.guessState == GuessState.IncorrectGuess }) {
+                return GuessState.IncorrectGuess
+            }
+            return GuessState.NotGuessed
+        }
+
 }

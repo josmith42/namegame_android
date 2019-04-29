@@ -14,6 +14,12 @@
         android:textColor="@color/darkGray"
         android:gravity="center_horizontal"/>
 
+    <TextView
+        android:id="@+id/guessResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
