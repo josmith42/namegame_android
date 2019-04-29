@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.willowtreeapps.namegame.R;
+import com.willowtreeapps.namegame.core.GameProfile;
 import com.willowtreeapps.namegame.core.ListRandomizer;
 import com.willowtreeapps.namegame.core.NameGameApplication;
 import com.willowtreeapps.namegame.network.api.model.Person;
@@ -52,13 +53,13 @@ public class NameGameFragment extends Fragment {
         super.onCreate(savedInstanceState);
         NameGameApplication.get(getActivity()).component().inject(this);
         nameGameViewModel = modelFactory.get(this);
-        nameGameViewModel.getChoices().observe(this, new Observer<List<Person>>() {
+        nameGameViewModel.getChoices().observe(this, new Observer<List<GameProfile>>() {
             @Override
-            public void onChanged(@Nullable List<Person> profiles) {
+            public void onChanged(@Nullable List<GameProfile> profiles) {
                 if (profiles == null) {
                     return;
                 }
-                setImages(faces, profiles);
+                updateImages(profiles);
             }
         });
         nameGameViewModel.getCorrectChoice().observe(this, new Observer<Person>() {
@@ -86,38 +87,11 @@ public class NameGameFragment extends Fragment {
         //Hide the views until data loads
 //        title.setAlpha(0);
 
-        int n = container.getChildCount();
-        for (int i = 0; i < n; i++) {
-            ImageView face = (ImageView) container.getChildAt(i);
-            face.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!nameGameViewModel.isGameActive().getValue()) {
-                        return;
-                    }
-                    int index = faces.indexOf(v);
-                    if (index < 0) {
-                        throw new IllegalStateException("View is not in faces list");
-                    }
-
-                    if (nameGameViewModel.isCorrectChoice(index)) {
-                        v.setBackgroundColor(Color.GREEN);
-                        title.setText("YES!!!!");
-                    }
-                    else {
-                        v.setBackgroundColor(Color.RED);
-                        title.setText("No, try again");
-                    }
-                }
-            });
-
-            //Hide the views until data loads
-            faces.add(face);
-        }
 
         view.findViewById(R.id.newGame).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                faces = new ArrayList<>();
                 nameGameViewModel.newGame();
             }
         });
@@ -128,17 +102,53 @@ public class NameGameFragment extends Fragment {
     /**
      * A method for setting the images from people into the imageviews
      */
-    private void setImages(@NotNull List<ImageView> faces, List<Person> profiles) {
+    private void updateImages(List<GameProfile> profiles) {
+        boolean newGame = false;
+        if (faces.size() == 0) {
+            newGame = true;
+            int containerChildCount = container.getChildCount();
+            for (int i = 0; i < containerChildCount; i++) {
+                ImageView face = (ImageView) container.getChildAt(i);
+                face.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!nameGameViewModel.isGameActive().getValue()) {
+                            return;
+                        }
+                        int index = faces.indexOf(v);
+                        if (index < 0) {
+                            throw new IllegalStateException("View is not in faces list");
+                        }
+
+                        nameGameViewModel.submitChoice(index);
+                    }
+                });
+
+            face.setScaleX(0);
+            face.setScaleY(0);
+                faces.add(face);
+            }
+        }
+
         int imageSize = (int) Ui.convertDpToPixel(100, getContext());
         int n = faces.size();
 
         for (int i = 0; i < n; i++) {
             ImageView face = faces.get(i);
-            String url = profiles.get(i).getHeadshot().getUrl();
+            GameProfile profile = profiles.get(i);
+            String url = profile.getPerson().getHeadshot().getUrl();
 
-            face.setScaleX(0);
-            face.setScaleY(0);
-            face.setBackgroundColor(Color.alpha(0));
+            switch(profile.getGuessState()) {
+                case CorrectGuess:
+                    face.setBackgroundColor(Color.GREEN);
+                    break;
+                case IncorrectGuess:
+                    face.setBackgroundColor(Color.RED);
+                    break;
+                case NotGuessed:
+                    face.setBackgroundColor(Color.alpha(0));
+                    break;
+            }
 
             // Fix URL so that pictures will load
             if (url.startsWith("//")) {
@@ -151,7 +161,9 @@ public class NameGameFragment extends Fragment {
                     .transform(new CircleBorderTransform())
                     .into(face);
         }
-        animateFacesIn();
+        if (newGame) {
+            animateFacesIn();
+        }
     }
 
     /**

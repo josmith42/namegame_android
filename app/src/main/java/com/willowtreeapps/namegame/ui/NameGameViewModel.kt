@@ -5,6 +5,8 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import com.willowtreeapps.namegame.core.GameProfile
+import com.willowtreeapps.namegame.core.GuessState
 import com.willowtreeapps.namegame.core.ListRandomizer
 import com.willowtreeapps.namegame.network.api.NameGameApi
 import com.willowtreeapps.namegame.network.api.ProfilesRepository
@@ -24,8 +26,8 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
 
     private var profiles : List<Person>? = null
 
-    private val _choices = MutableLiveData<List<Person>>()
-    val choices : LiveData<List<Person>> = _choices
+    private val _choices = MutableLiveData<List<GameProfile>>()
+    val choices : LiveData<List<GameProfile>> = _choices
 
     private val _correctChoice = MutableLiveData<Person>()
     val correctChoice : LiveData<Person> = _correctChoice
@@ -49,25 +51,30 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         })
     }
 
-    fun newGame() = profiles?.let {
-        val choices = it.subList(0, NUM_CHOICES)
+    fun newGame() = profiles?.let { profile ->
+        val choices = profile.subList(0, NUM_CHOICES).map { GameProfile(it) }
         _choices.postValue(choices)
-        _correctChoice.postValue(listRandomizer.pickOne(choices))
+        _correctChoice.postValue(listRandomizer.pickOne(choices).person)
         _isGameActive.postValue(true)
     }
 
-    fun isCorrectChoice(index: Int): Boolean {
+    fun submitChoice(index: Int): Boolean {
         val choices = _choices.value ?: return false
         if (index < 0 || index > choices.size) {
             return false
         }
 
         val choice = choices[index]
-        if (choice == _correctChoice.value) {
+        val isCorrect = choice.person == _correctChoice.value
+        if (isCorrect) {
+            choice.guessState = GuessState.CorrectGuess
+            _choices.postValue(choices)
             _isGameActive.postValue(false)
-            return true
         }
-
-        return false
+        else {
+            choice.guessState = GuessState.IncorrectGuess
+            _choices.postValue(choices)
+        }
+        return isCorrect
     }
 }
