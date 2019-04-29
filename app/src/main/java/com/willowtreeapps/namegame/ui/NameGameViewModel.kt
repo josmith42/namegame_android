@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import com.willowtreeapps.namegame.core.ListRandomizer
 import com.willowtreeapps.namegame.network.api.NameGameApi
 import com.willowtreeapps.namegame.network.api.ProfilesRepository
 import com.willowtreeapps.namegame.network.api.model.Person
@@ -15,6 +16,9 @@ const val NUM_CHOICES = 6
 class NameGameViewModel(application: Application) : AndroidViewModel(application) {
     @Inject
     lateinit var nameGameApi: NameGameApi
+
+    @Inject
+    lateinit var listRandomizer: ListRandomizer
 
     private lateinit var profilesRepository: ProfilesRepository
 
@@ -30,6 +34,9 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
     val isGameActive : LiveData<Boolean> = _isGameActive
 
     fun init() {
+        if (::profilesRepository.isInitialized) {
+            return
+        }
         profilesRepository = ProfilesRepository(nameGameApi, object : ProfilesRepository.Listener {
             override fun onLoadFinished(people: List<Person>) {
                 profiles = people
@@ -45,7 +52,7 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
     fun newGame() = profiles?.let {
         val choices = it.subList(0, NUM_CHOICES)
         _choices.postValue(choices)
-        _correctChoice.postValue(choices[4])
+        _correctChoice.postValue(listRandomizer.pickOne(choices))
         _isGameActive.postValue(true)
     }
 

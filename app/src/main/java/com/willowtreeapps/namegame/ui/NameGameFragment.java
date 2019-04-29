@@ -92,6 +92,9 @@ public class NameGameFragment extends Fragment {
             face.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!nameGameViewModel.isGameActive().getValue()) {
+                        return;
+                    }
                     int index = faces.indexOf(v);
                     if (index < 0) {
                         throw new IllegalStateException("View is not in faces list");
@@ -109,10 +112,15 @@ public class NameGameFragment extends Fragment {
             });
 
             //Hide the views until data loads
-//            face.setScaleX(0);
-//            face.setScaleY(0);
             faces.add(face);
         }
+
+        view.findViewById(R.id.newGame).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nameGameViewModel.newGame();
+            }
+        });
 
         nameGameViewModel.init();
     }
@@ -128,6 +136,10 @@ public class NameGameFragment extends Fragment {
             ImageView face = faces.get(i);
             String url = profiles.get(i).getHeadshot().getUrl();
 
+            face.setScaleX(0);
+            face.setScaleY(0);
+            face.setBackgroundColor(Color.alpha(0));
+
             // Fix URL so that pictures will load
             if (url.startsWith("//")) {
                 url = "https:" + url;
@@ -139,6 +151,7 @@ public class NameGameFragment extends Fragment {
                     .transform(new CircleBorderTransform())
                     .into(face);
         }
+        animateFacesIn();
     }
 
     /**
