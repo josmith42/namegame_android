@@ -1,6 +1,7 @@
 package com.willowtreeapps.namegame.ui;
 
 import android.arch.lifecycle.Observer;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,13 +52,22 @@ public class NameGameFragment extends Fragment {
         super.onCreate(savedInstanceState);
         NameGameApplication.get(getActivity()).component().inject(this);
         nameGameViewModel = modelFactory.get(this);
-        nameGameViewModel.getProfiles().observe(this, new Observer<List<Person>>() {
+        nameGameViewModel.getChoices().observe(this, new Observer<List<Person>>() {
             @Override
             public void onChanged(@Nullable List<Person> profiles) {
                 if (profiles == null) {
                     return;
                 }
                 setImages(faces, profiles);
+            }
+        });
+        nameGameViewModel.getCorrectChoice().observe(this, new Observer<Person>() {
+            @Override
+            public void onChanged(@Nullable Person person) {
+                if (person == null) {
+                    return;
+                }
+                title.setText(String.format("Which picture matches %s %s?", person.getFirstName(), person.getLastName()));
             }
         });
     }
@@ -79,11 +89,29 @@ public class NameGameFragment extends Fragment {
         int n = container.getChildCount();
         for (int i = 0; i < n; i++) {
             ImageView face = (ImageView) container.getChildAt(i);
-            faces.add(face);
+            face.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int index = faces.indexOf(v);
+                    if (index < 0) {
+                        throw new IllegalStateException("View is not in faces list");
+                    }
+
+                    if (nameGameViewModel.isCorrectChoice(index)) {
+                        v.setBackgroundColor(Color.GREEN);
+                        title.setText("YES!!!!");
+                    }
+                    else {
+                        v.setBackgroundColor(Color.RED);
+                        title.setText("No, try again");
+                    }
+                }
+            });
 
             //Hide the views until data loads
 //            face.setScaleX(0);
 //            face.setScaleY(0);
+            faces.add(face);
         }
 
         nameGameViewModel.init();
