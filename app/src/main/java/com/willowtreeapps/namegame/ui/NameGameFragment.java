@@ -32,6 +32,8 @@ import javax.inject.Inject;
 public class NameGameFragment extends Fragment {
 
     private static final Interpolator OVERSHOOT = new OvershootInterpolator();
+    private static final int GREEN = 0xff018786;
+    private static final int RED = 0xffb00020;
 
     @Inject
     ListRandomizer listRandomizer;
@@ -86,9 +88,6 @@ public class NameGameFragment extends Fragment {
         statusText = view.findViewById(R.id.guessResult);
         container = view.findViewById(R.id.face_container);
 
-        //Hide the views until data loads
-//        title.setAlpha(0);
-
         int containerChildCount = container.getChildCount();
         for (int i = 0; i < containerChildCount; i++) {
             ImageView face = (ImageView) container.getChildAt(i);
@@ -130,11 +129,11 @@ public class NameGameFragment extends Fragment {
                 break;
             case CorrectGuess:
                 statusText.setText(R.string.correct);
-                statusText.setTextColor(Color.GREEN);
+                statusText.setTextColor(GREEN);
                 break;
             case IncorrectGuess:
                 statusText.setText(R.string.incorrect);
-                statusText.setTextColor(Color.RED);
+                statusText.setTextColor(RED);
                 break;
         }
     }
@@ -167,10 +166,10 @@ public class NameGameFragment extends Fragment {
 
             switch(profile.getGuessState()) {
                 case CorrectGuess:
-                    face.setBackgroundColor(Color.GREEN);
+                    face.setBackgroundColor(GREEN);
                     break;
                 case IncorrectGuess:
-                    face.setBackgroundColor(Color.RED);
+                    face.setBackgroundColor(RED);
                     break;
                 case NotGuessed:
                     face.setBackgroundColor(Color.alpha(0));
