@@ -35,8 +35,12 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
     private var _isGameActive = MutableLiveData<Boolean>()
     val isGameActive : LiveData<Boolean> = _isGameActive
 
-    fun init() {
+    /**
+     * Kicks off a request to fetch data from the server.
+     */
+    fun fetchData() {
         if (::profilesRepository.isInitialized) {
+            // Don't need to fetch it if we already have done it.
             return
         }
         profilesRepository = ProfilesRepository(nameGameApi, object : ProfilesRepository.Listener {
@@ -51,6 +55,9 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         })
     }
 
+    /**
+     * Starts a new game. Chooses a new set of random pictures with a random correct answer.
+     */
     fun newGame() = profiles?.let { profile ->
         val choices = listRandomizer.pickN(profile, NUM_CHOICES).map { GameProfile(it) }
         _choices.postValue(choices)
@@ -58,6 +65,11 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         _isGameActive.postValue(true)
     }
 
+    /**
+     * Submits a user's guess and verifies if it's correct. If it is correct, the game is marked over.
+     * @param index  The index of the choice that the user picked.
+     * @return True if the choice is correct.
+     */
     fun submitChoice(index: Int): Boolean {
         val choices = _choices.value ?: return false
         if (index < 0 || index > choices.size) {
@@ -78,6 +90,10 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         return isCorrect
     }
 
+    /**
+     * Gets the overall game state. Used to inform the user if the correct answer has been
+     * chosen or if the user needs to keep guessing.
+     */
     val overallGameState : GuessState
         get() {
             val choices = _choices.value ?: return GuessState.NotGuessed

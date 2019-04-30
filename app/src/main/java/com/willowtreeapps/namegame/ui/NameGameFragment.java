@@ -81,7 +81,7 @@ public class NameGameFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         title = view.findViewById(R.id.title);
         statusText = view.findViewById(R.id.guessResult);
         container = view.findViewById(R.id.face_container);
@@ -116,7 +116,7 @@ public class NameGameFragment extends Fragment {
             }
         });
 
-        nameGameViewModel.init();
+        nameGameViewModel.fetchData();
     }
 
     private void udpateTextStatus() {
