@@ -69,7 +69,7 @@ public class NameGameFragment extends Fragment {
                 if (person == null) {
                     return;
                 }
-                title.setText(String.format("Which picture matches %s %s?", person.getFirstName(), person.getLastName()));
+                title.setText(String.format("Which picture is %s %s?", person.getFirstName(), person.getLastName()));
             }
         });
     }
@@ -129,11 +129,11 @@ public class NameGameFragment extends Fragment {
                 statusText.setTextColor(Color.alpha(0));
                 break;
             case CorrectGuess:
-                statusText.setText("Correct!");
+                statusText.setText(R.string.correct);
                 statusText.setTextColor(Color.GREEN);
                 break;
             case IncorrectGuess:
-                statusText.setText("No, try again");
+                statusText.setText(R.string.incorrect);
                 statusText.setTextColor(Color.RED);
                 break;
         }

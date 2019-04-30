@@ -2,4 +2,6 @@
     <string name="app_name">Name Game</string>
     <string name="question">Who is %s?</string>
     <string name="cdFace">A face</string>
+    <string name="correct">Correct!</string>
+    <string name="incorrect">No, try again.</string>
 </resources>
