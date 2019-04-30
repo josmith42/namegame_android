@@ -41,7 +41,7 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
         }
         profilesRepository = ProfilesRepository(nameGameApi, object : ProfilesRepository.Listener {
             override fun onLoadFinished(people: List<Person>) {
-                profiles = people
+                profiles = people.filter { it.headshot?.url != null }
                 newGame()
             }
 
@@ -52,7 +52,7 @@ class NameGameViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun newGame() = profiles?.let { profile ->
-        val choices = profile.subList(0, NUM_CHOICES).map { GameProfile(it) }
+        val choices = listRandomizer.pickN(profile, NUM_CHOICES).map { GameProfile(it) }
         _choices.postValue(choices)
         _correctChoice.postValue(listRandomizer.pickOne(choices).person)
         _isGameActive.postValue(true)
