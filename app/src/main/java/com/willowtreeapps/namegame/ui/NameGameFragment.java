@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.willowtreeapps.namegame.R;
 import com.willowtreeapps.namegame.core.GameProfile;
+import com.willowtreeapps.namegame.core.GuessState;
 import com.willowtreeapps.namegame.core.ListRandomizer;
 import com.willowtreeapps.namegame.core.NameGameApplication;
 import com.willowtreeapps.namegame.network.api.model.Person;
@@ -110,7 +111,6 @@ public class NameGameFragment extends Fragment {
         view.findViewById(R.id.newGame).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                faces = new ArrayList<>();
                 nameGameViewModel.newGame();
             }
         });
@@ -147,16 +147,20 @@ public class NameGameFragment extends Fragment {
      */
     private void updateImages(List<GameProfile> profiles) {
 
-        boolean newGame = false;
         if (faces.size() == 0) {
-            newGame = true;
             int containerChildCount = container.getChildCount();
             for (int i = 0; i < containerChildCount; i++) {
                 ImageView face = (ImageView) container.getChildAt(i);
-
-                face.setScaleX(0);
-                face.setScaleY(0);
                 faces.add(face);
+            }
+        }
+
+        boolean newGame = nameGameViewModel.getOverallGameState() == GuessState.NotGuessed;
+        if (newGame) {
+            // Hide images while loading them
+            for (ImageView view: faces) {
+                view.setScaleX(0);
+                view.setScaleY(0);
             }
         }
 
