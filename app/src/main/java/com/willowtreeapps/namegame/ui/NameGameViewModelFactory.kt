@@ -3,8 +3,11 @@ package com.willowtreeapps.namegame.ui
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.Fragment
 import com.willowtreeapps.namegame.core.NameGameApplication
-import java.lang.IllegalStateException
 
+/**
+ * Factory for NameGameViewModel. Retrieves a view model object from ViewModelProviders and performs
+ * dagger injection on it.
+ */
 class NameGameViewModelFactory {
     fun get(fragment: Fragment): NameGameViewModel {
         val model = ViewModelProviders.of(fragment).get(NameGameViewModel::class.java)

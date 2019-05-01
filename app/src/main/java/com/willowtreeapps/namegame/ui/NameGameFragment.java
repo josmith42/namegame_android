@@ -61,7 +61,7 @@ public class NameGameFragment extends Fragment {
                 if (profiles == null) {
                     return;
                 }
-                udpateTextStatus();
+                updateTextStatus();
                 updateImages(profiles);
             }
         });
@@ -118,7 +118,11 @@ public class NameGameFragment extends Fragment {
         nameGameViewModel.fetchData();
     }
 
-    private void udpateTextStatus() {
+    /**
+     * Updates the "status" text, i.e. the text displayed to the user about whether a choice
+     * was correct or not.
+     */
+    private void updateTextStatus() {
         if (statusText == null) {
             return;
         }
