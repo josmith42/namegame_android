@@ -3,20 +3,17 @@ package com.willowtreeapps.namegame.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
 
 public class CircleBorderTransform implements Transformation {
 
-    private static final int BORDER_COLOR = Color.WHITE;
-    private static final int BORDER_RADIUS = 5;
+    private static final int BORDER_RADIUS = 10;
 
-    public CircleBorderTransform() {
-        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        borderPaint.setColor(BORDER_COLOR);
-        borderPaint.setStyle(Paint.Style.STROKE);
+    private final int borderColor;
+    public CircleBorderTransform(int borderColor) {
+        this.borderColor = borderColor;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class CircleBorderTransform implements Transformation {
 
         // Prepare the background
         Paint paintBg = new Paint();
-        paintBg.setColor(BORDER_COLOR);
+        paintBg.setColor(borderColor);
         paintBg.setAntiAlias(true);
 
         // Draw the background circle
@@ -58,6 +55,6 @@ public class CircleBorderTransform implements Transformation {
 
     @Override
     public String key() {
-        return "circle";
+        return String.format("circle%d", borderColor);
     }
 }

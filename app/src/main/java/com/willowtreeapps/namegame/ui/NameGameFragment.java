@@ -32,7 +32,7 @@ import javax.inject.Inject;
 public class NameGameFragment extends Fragment {
 
     private static final Interpolator OVERSHOOT = new OvershootInterpolator();
-    private static final int GREEN = 0xff018786;
+    private static final int GREEN = 0xff5cb85c;
     private static final int RED = 0xffb00020;
 
     @Inject
@@ -164,15 +164,19 @@ public class NameGameFragment extends Fragment {
             GameProfile profile = profiles.get(i);
             String url = profile.getPerson().getHeadshot().getUrl();
 
+            int borderColor = Color.WHITE;
             switch(profile.getGuessState()) {
                 case CorrectGuess:
-                    face.setBackgroundColor(GREEN);
+                    borderColor = GREEN;
                     break;
                 case IncorrectGuess:
-                    face.setBackgroundColor(RED);
+                    borderColor = RED;
                     break;
                 case NotGuessed:
-                    face.setBackgroundColor(Color.alpha(0));
+                    borderColor = Color.WHITE;
+                    picasso.load(url)
+                            .transform(new CircleBorderTransform(RED))
+                            .fetch();
                     break;
             }
 
@@ -184,7 +188,7 @@ public class NameGameFragment extends Fragment {
             picasso.load(url)
                     .placeholder(R.drawable.ic_face_white_48dp)
                     .resize(imageSize, imageSize)
-                    .transform(new CircleBorderTransform())
+                    .transform(new CircleBorderTransform(borderColor))
                     .into(face);
         }
 
